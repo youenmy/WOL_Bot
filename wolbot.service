@@ -1,0 +1,33 @@
+[Unit]
+Description=Telegram Wake-on-LAN bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=wolbot
+Group=wolbot
+WorkingDirectory=/opt/wolbot
+EnvironmentFile=/etc/wolbot.env
+# Создаёт /var/lib/wolbot и делает его записываемым даже при ProtectSystem=strict.
+# Туда бот складывает заявки на доступ (requests.json).
+StateDirectory=wolbot
+ExecStart=/opt/wolbot/venv/bin/python /opt/wolbot/wolbot.py
+Restart=always
+RestartSec=10
+# Код 1 = ошибка конфигурации. Перезапуск её не исправит, поэтому не крутим цикл.
+RestartPreventExitStatus=1
+
+# ICMP-ping из-под непривилегированного пользователя работает благодаря
+# net.ipv4.ping_group_range (см. install.sh). Broadcast UDP прав не требует.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX AF_NETLINK
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

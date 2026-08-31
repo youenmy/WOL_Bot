@@ -1,0 +1,5 @@
+# Скрипты качаются из raw.githubusercontent и исполняются как есть —
+# CRLF в них ломает shebang. Держим LF независимо от платформы.
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf
